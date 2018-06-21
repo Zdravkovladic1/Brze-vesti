@@ -157,6 +157,8 @@ public class TestCategories {
         
         WebElement deleteButton = firstRow.findElement(By.cssSelector("button[title='Delete']"));
         deleteButton.click();
+        
+        
     }
 
 }
