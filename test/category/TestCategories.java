@@ -18,17 +18,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import pages.CategoriesPage;
 
 public class TestCategories {
 
     public static WebDriver driver;
     public static WebDriverWait wait;
     public static DateFormat dateFormat;
-    
 
     @BeforeClass
     public static void setUpClass() {
-        
+
         dateFormat = new SimpleDateFormat("HH:mm:ss");
         System.out.println("@BeforeClass: " + dateFormat.format(new Date()));
 
@@ -37,8 +37,8 @@ public class TestCategories {
 
         driver.manage().window().maximize();
         driver.get("http://bvtest.school.cubes.rs/login");
-        
-          // Fields on Login page found by name locator and explicit wait
+
+        // Fields on Login page found by name locator and explicit wait
         WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));
         emailField.sendKeys("qa@cubes.rs");
 
@@ -65,7 +65,7 @@ public class TestCategories {
     @Before
     public void setUp() {
 
-      System.out.println("@Before: " + dateFormat.format(new Date()));
+        System.out.println("@Before: " + dateFormat.format(new Date()));
 
         WebElement categories = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Categories")));
         categories.click();
@@ -74,7 +74,7 @@ public class TestCategories {
 
     @After
     public void tearDown() throws InterruptedException {
-        
+
         Thread.sleep(1000);
         System.out.println("@After: " + dateFormat.format(new Date()));
     }
@@ -84,14 +84,21 @@ public class TestCategories {
 
         for (int i = 0; i < 5; i++) {
 
-            WebElement addCategoriesButton = driver.findElement(By.className("pull-right"));
-            addCategoriesButton.click();
+            CategoriesPage categoriesPage = new CategoriesPage();
+//            
+//            categoriesPage.clickOnAddCategoryButton(driver);
+////            WebElement addCategoriesButton = driver.findElement(By.className("pull-right"));
+////            addCategoriesButton.click();
+//
+//            categoriesPage.fillTitleField(driver);
+////            WebElement titleField = driver.findElement(By.id("title"));
+////            titleField.sendKeys(Helper.getRandomText());
+//
+//            categoriesPage.clickOnSaveCategoryButton(driver);
+////            WebElement saveButton = driver.findElement(By.id("save-category-button"));
+////            saveButton.click();
 
-            WebElement titleField = driver.findElement(By.id("title"));
-            titleField.sendKeys(Helper.getRandomText());
-
-            WebElement saveButton = driver.findElement(By.id("save-category-button"));
-            saveButton.click();
+            categoriesPage.addNewCategory(driver);
 
             String expectedUrl = "http://bvtest.school.cubes.rs/admin/categories";
             String actualUrl = driver.getCurrentUrl();
@@ -112,22 +119,9 @@ public class TestCategories {
     @Test
     public void testEditLastCategory() {
 
-        WebElement tBody = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ui-sortable")));
-        List<WebElement> rows = tBody.findElements(By.tagName("tr"));
+        CategoriesPage categoriesPage = new CategoriesPage();
 
-        System.out.println("Number of rows: " + rows.size());
-
-        WebElement lastRow = rows.get(rows.size() - 1);
-
-        WebElement editButton = lastRow.findElement(By.className("btn-default"));
-        editButton.click();
-
-        WebElement titleField = driver.findElement(By.id("title"));
-        titleField.clear();
-        titleField.sendKeys(Helper.getRandomText());
-
-        WebElement saveButton = driver.findElement(By.id("save-category-button"));
-        saveButton.click();
+        categoriesPage.editLastCategory(driver, wait);
 
         String expectedUrl = "http://bvtest.school.cubes.rs/admin/categories";
         String actualUrl = driver.getCurrentUrl();
@@ -143,22 +137,36 @@ public class TestCategories {
 
 //      
     }
-    
+
     @Test
-    
-    public void testDeleteCategory(){
-        
-        WebElement tBody = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ui-sortable")));
-        List<WebElement> rows = tBody.findElements(By.tagName("tr"));
 
-        System.out.println("Number of rows: " + rows.size());
+    public void testEditFirstCategory() {
 
-        WebElement firstRow = rows.get(0);
+        CategoriesPage categoriesPage = new CategoriesPage();
+
+        categoriesPage.editFirstCategory(driver, wait);
         
-        WebElement deleteButton = firstRow.findElement(By.cssSelector("button[title='Delete']"));
-        deleteButton.click();
+        Assert.assertEquals("Url doesent match", "http://bvtest.school.cubes.rs/admin/categories", driver.getCurrentUrl());
+
+    }
+
+    @Test
+
+    public void testDeleteCategory() {
         
-        
+        CategoriesPage categoriesPage = new CategoriesPage();
+        categoriesPage.deleteFirstCategory(driver, wait);
+
+//        WebElement tBody = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ui-sortable")));
+//        List<WebElement> rows = tBody.findElements(By.tagName("tr"));
+//
+//        System.out.println("Number of rows: " + rows.size());
+//
+//        WebElement firstRow = rows.get(0);
+//
+//        WebElement deleteButton = firstRow.findElement(By.cssSelector("button[title='Delete']"));
+//        deleteButton.click();
+
     }
 
 }
